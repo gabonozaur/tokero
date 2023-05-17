@@ -1,52 +1,53 @@
+import { useMemo } from "react";
 import { Chart } from "react-google-charts";
-import { generateCurrencies } from "../utils/generateCurrencies";
-import generateFeePair, {
-  generateBuyKey,
-  generateSellKey,
-} from "../utils/generateFeePair";
-import { ChartDTO } from "./types";
+import { FeePairDTO, generateBuyKey, generateSellKey } from "../utils/feePair";
 
-const ChartComponent: React.FC<{ data: ChartDTO[] }> = ({ data }) => {
-  const { coinsArray, currenciesArray } = generateCurrencies(data);
-  const records = coinsArray.reduce(
-    (acumulator, coin) => {
-      const transactions = currenciesArray.map((currency) =>
-        generateFeePair("eliot", currency, coin)
-      );
-      return [...acumulator, ...transactions];
-    },
-    [] as {
-      [x: string]: string | number;
-      date: string;
-    }[][]
-  );
+const ChartComponent: React.FC<{ records: FeePairDTO[][] }> = ({ records }) => {
+  const data = useMemo(() => {
+    const buyListing = {} as { [key: string]: number };
+    const sellListing = {} as { [key: string]: number };
+    const result = [] as any;
 
-  console.log("records", records);
+    records.map(([buy, sell]) => {
+      const { date, ...rest } = buy;
+      const [currency, coin] = Object.keys(rest)[0].split("-");
 
-  const marco = records.reduce((acc, [buy, sell]) => {
-    const { date, ...rest } = buy;
-    const [currency, coin] = Object.keys(rest)[0].split("-");
-    const buyVolume = buy[generateBuyKey(currency, coin)];
-    const sellVolume = sell[generateSellKey(currency, coin)];
+      const buyKey = generateBuyKey(currency, coin);
+      const sellKey = generateSellKey(currency, coin);
 
-    const result = [];
+      const buyVolume = buy[buyKey] as number;
+      const sellVolume = sell[sellKey] as number;
 
-    if (buyVolume) {
-      result.push([coin, currency + " ", buyVolume]);
-    }
-    if (sellVolume) {
-      result.push([currency + " ", coin + "  ", sellVolume]);
-    }
+      buyListing[buyKey] = (buyListing[buyKey] ?? 0) + buyVolume;
+      sellListing[sellKey] = (sellListing[sellKey] ?? 0) + sellVolume;
+    });
 
-    return [...acc, ...result];
-  }, [] as any);
+    Object.keys(buyListing).forEach((buy) => {
+      const [currency, coin] = buy.split("-");
+
+      const buyKey = generateBuyKey(currency, coin);
+      const sellKey = generateSellKey(currency, coin);
+
+      const buyVolume = buyListing[buyKey] as number;
+      const sellVolume = sellListing[sellKey] as number;
+
+      if (buyVolume) {
+        result.push([coin, currency + " ", buyVolume]);
+      }
+      if (sellVolume) {
+        result.push([currency + " ", coin + "  ", sellVolume]);
+      }
+    });
+
+    return result;
+  }, [records]);
 
   return (
     <Chart
       chartType="Sankey"
       width="100%"
       height="500px"
-      data={[["From", "To", "Value"], ...marco]}
+      data={[["From", "To", "Value"], ...data]}
       options={{
         sankey: {
           link: {
