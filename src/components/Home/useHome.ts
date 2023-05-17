@@ -4,11 +4,9 @@ import { PairsDTO } from "../Chart/types";
 import { FeePairDTO } from "../utils/feePair";
 import { generateCurrencies } from "../utils/generateCurrencies";
 import { UseHome } from "./types";
+const actualDate = new Date().toISOString();
 
 const useHome = (pairs: PairsDTO[]): UseHome => {
-  const actualDate = new Date().toISOString();
-  console.log("actual date is", actualDate);
-
   const [records, setRecords] = useState<FeePairDTO[][]>([]);
   const [fetching, setFetching] = useState(true);
   const [startDate, setStartDate] = useState(actualDate);
@@ -55,17 +53,15 @@ const useHome = (pairs: PairsDTO[]): UseHome => {
           setRecords(res.data);
           setFetching(false);
         },
-        (err) => {
-          console.log("err");
+        () => {
           setFetching(false);
+          alert("something went wrong");
         }
       );
   };
 
   useEffect(() => {
     callRandom();
-    console.log("start is", startDate);
-    console.log("end is ", endDate);
   }, [startDate, endDate]);
 
   return {

@@ -18,23 +18,31 @@ const FilterInput = () => {
   minDate.setMonth(minDate.getMonth() - 2);
 
   return (
-    <div>
-      <div style={{ display: "flex" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
+      <div
+        style={{
+          display: "gred",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "8px",
+        }}
+      >
         <button
           onClick={() => {
             seeLastXDays(1);
           }}
         >
-          set 1 d
+          daily
         </button>
         <button
           onClick={() => {
             seeLastXDays(7);
           }}
         >
-          set 7 d
+          weekly
         </button>
-        <button onClick={seeLastMonth}>set 1 m</button>
+        <button onClick={seeLastMonth}>monthly</button>
       </div>
 
       <DatePicker

@@ -30,5 +30,5 @@ export default function handler(req: any, res: any) {
 
   setTimeout(() => {
     res.status(200).json(transactions);
-  }, 500);
+  }, 1000);
 }
