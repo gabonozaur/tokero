@@ -1,7 +1,4 @@
-export interface ChartProps {
-  data: ChartDTO;
-}
-export interface ChartDTO {
+export interface PairsDTO {
   baseCoinSymbol: string;
   targetCoinSymbol: string;
 }
