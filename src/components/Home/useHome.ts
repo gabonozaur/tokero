@@ -64,9 +64,20 @@ const useHome = (pairs: PairsDTO[]): UseHome => {
 
   useEffect(() => {
     callRandom();
+    console.log("start is", startDate);
+    console.log("end is ", endDate);
   }, [startDate, endDate]);
 
-  return { records, fetching, seeLastXDays, seeLastMonth };
+  return {
+    records,
+    fetching,
+    seeLastXDays,
+    seeLastMonth,
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+  };
 };
 
 export default useHome;

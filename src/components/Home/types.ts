@@ -5,4 +5,8 @@ export interface UseHome {
   fetching: boolean;
   seeLastXDays: (count: number) => void;
   seeLastMonth: () => void;
+  startDate: string;
+  endDate: string;
+  setStartDate: (newVal: string) => void;
+  setEndDate: (newVal: string) => void;
 }
